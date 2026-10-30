@@ -26,9 +26,9 @@
     @foreach (['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'] as $nombre)<div class="d-none d-md-block fw-semibold text-center p-2">{{ $nombre }}</div>@endforeach
     @for ($espacio = 1; $espacio < $mes->isoWeekday(); $espacio++)<div class="d-none d-md-block" aria-hidden="true"></div>@endfor
     @foreach ($dias as $dia)
-        <section class="card calendario-dia" aria-labelledby="dia-{{ $dia['fecha']->format('Y-m-d') }}">
+        <section @class(['card', 'calendario-dia', 'calendario-hoy' => $dia['fecha']->isToday()]) aria-labelledby="dia-{{ $dia['fecha']->format('Y-m-d') }}">
             <div class="card-body p-2">
-                <h3 id="dia-{{ $dia['fecha']->format('Y-m-d') }}" class="h6">{{ $dia['fecha']->locale('es')->isoFormat('dddd D') }}</h3>
+                <h3 id="dia-{{ $dia['fecha']->format('Y-m-d') }}" class="h6"><span class="d-md-none">{{ $dia['fecha']->locale('es')->isoFormat('dddd') }} </span><span class="visually-hidden d-none d-md-inline">{{ $dia['fecha']->locale('es')->isoFormat('dddd') }} </span><span class="calendario-numero">{{ $dia['fecha']->format('j') }}</span></h3>
                 @foreach ($dia['reservas'] as $reservacion)
                     <div class="border rounded p-2 small mb-2 text-break">
                         <strong>{{ $reservacion->cabana?->nombre ?? 'Cabaña por revisar' }}</strong><br>
@@ -46,7 +46,7 @@
                         @if ($evento->origen !== 'cec' && ! $evento->reservacion_id)<span class="d-block mt-1">Pendiente de completar</span>@endif
                     </a>
                 @endforeach
-                @if ($dia['reservas']->isEmpty() && $dia['eventos']->isEmpty())<span class="small text-body-secondary">Sin eventos</span>@endif
+                @if ($dia['reservas']->isEmpty() && $dia['eventos']->isEmpty())<span class="small text-body-secondary sin-eventos">Sin eventos</span>@endif
             </div>
         </section>
     @endforeach

@@ -1,3 +1,5 @@
+import '@fontsource-variable/figtree';
+import '@fontsource-variable/bitter';
 import 'bootstrap';
 import { iniciarBuscadores } from './buscador-huesped';
 
