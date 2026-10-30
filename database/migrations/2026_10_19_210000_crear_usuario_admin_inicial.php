@@ -1,7 +1,5 @@
 <?php
 
-use App\Models\Rol;
-use App\Models\Usuario;
 use Database\Seeders\PermisosSeeder;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
@@ -10,30 +8,19 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // Las pruebas crean sus propios usuarios; no deben heredar esta cuenta.
+        // Las pruebas crean sus propios datos y no deben heredar los del arranque.
         if (app()->environment('testing')) {
             return;
         }
 
-        DB::transaction(function () {
-            (new PermisosSeeder)->run();
-
-            if (Usuario::withTrashed()->where('usuario', 'admin')->exists()) {
-                return;
-            }
-
-            $admin = Usuario::create([
-                'nombre' => 'Administrador',
-                'usuario' => 'admin',
-                'correo' => null,
-                'contrasena' => 'admin123',
-            ]);
-            $admin->roles()->attach(Rol::where('codigo', 'administrador')->sole());
-        });
+        // Solo se cargan roles y permisos. La primera cuenta administradora se crea
+        // con `php artisan usuarios:crear-administrador`, sin contraseñas publicadas
+        // en el repositorio.
+        DB::transaction(fn () => (new PermisosSeeder)->run());
     }
 
     public function down(): void
     {
-        // Se conserva la cuenta: podría tener auditoría y registros asociados.
+        // Se conservan los roles y permisos: podrían tener usuarios y auditoría asociados.
     }
 };

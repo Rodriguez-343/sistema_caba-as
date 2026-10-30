@@ -183,7 +183,7 @@ export class BuscadorHuesped {
             this.elementos.resultados.hidden = botones.length === 0;
             this.elementos.entrada.setAttribute('aria-expanded', String(botones.length > 0));
             this.estado(botones.length === 0 ? 'No se encontraron clientes' :
-                botones.length + ' coincidencias. Selecciona un cliente.' + (datos.hay_mas ? ' Hay más resultados; refina la búsqueda.' : ''), false, botones.length === 0);
+                (botones.length === 1 ? '1 coincidencia. Selecciona el cliente.' : botones.length + ' coincidencias. Selecciona un cliente.') + (datos.hay_mas ? ' Hay más resultados; refina la búsqueda.' : ''), false, botones.length === 0);
         } catch (error) {
             if (version !== this.version || error.name === 'AbortError') return;
             this.limpiarResultados();

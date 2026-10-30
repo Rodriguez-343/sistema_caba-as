@@ -18,7 +18,10 @@ return new class extends Migration
             $table->foreignId('reservacion_id')->nullable()->unique()->constrained('reservaciones')->restrictOnDelete();
             $table->string('origen', 20);
             $table->text('uid');
-            $table->char('identidad', 64)->collation('ascii_bin');
+            $identidad = $table->char('identidad', 64);
+            if (in_array(Schema::getConnection()->getDriverName(), ['mysql', 'mariadb'], true)) {
+                $identidad->collation('ascii_bin'); // SQLite compara en binario por omisión.
+            }
             $table->dateTime('inicio');
             $table->dateTime('fin');
             $table->boolean('fecha_completa')->default(false);

@@ -54,7 +54,7 @@ Homestead.json
 Homestead.yaml
 Thumbs.db
 
-# Archivos de construcción/guía del proyecto y soporte de pruebas (solo a futuro).
+# Archivos de construcción y guía del proyecto.
 # Nota: si ya están versionados, seguirán en Git hasta quitarlos del índice.
 /.agents
 /AGENTS.md
@@ -63,5 +63,3 @@ Thumbs.db
 /SYSTEM_SPEC.md
 /SYSTEM_SPEC_CEC_RECONSTRUCCION.md
 /docs
-/tests
-/phpunit.xml

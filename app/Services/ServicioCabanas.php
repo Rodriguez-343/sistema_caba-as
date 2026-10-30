@@ -22,6 +22,7 @@ class ServicioCabanas
         $permiso = $cabana ? 'cabanas.editar' : 'cabanas.crear';
         $this->autorizar($solicitud, $permiso);
         $rutaImagen = null;
+        $imagenAnterior = null;
 
         try {
             if ($solicitud->hasFile('imagen')) {
@@ -31,7 +32,7 @@ class ServicioCabanas
                 }
             }
 
-            return DB::transaction(function () use ($solicitud, $datos, $cabana, $permiso, $rutaImagen) {
+            $registro = DB::transaction(function () use ($solicitud, $datos, $cabana, $permiso, $rutaImagen, &$imagenAnterior) {
                 if ($cabana) {
                     $this->bloqueo->adquirir([$cabana->id]);
                 }
@@ -55,6 +56,7 @@ class ServicioCabanas
                     ]);
                 }
                 if ($rutaImagen !== null) {
+                    $imagenAnterior = $registro->imagen_principal;
                     $registro->imagen_principal = $rutaImagen;
                 }
                 $registro->save();
@@ -65,6 +67,17 @@ class ServicioCabanas
 
                 return $registro;
             });
+
+            // La imagen reemplazada ya no se referencia: se elimina para no acumular archivos huérfanos.
+            if ($imagenAnterior && $imagenAnterior !== $rutaImagen) {
+                try {
+                    Storage::disk('cabanas')->delete($imagenAnterior);
+                } catch (FilesystemException $errorLimpieza) {
+                    report($errorLimpieza);
+                }
+            }
+
+            return $registro;
         } catch (Throwable $error) {
             if ($rutaImagen) {
                 try {

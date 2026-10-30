@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\CabecerasSeguridad;
 use App\Http\Middleware\VerificarUsuarioActivo;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -17,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->redirectUsersTo(fn () => route('inicio'));
         $middleware->trimStrings(except: ['contrasena', 'contrasena_confirmation', 'telefono', 'numero_identidad']);
         $middleware->alias(['usuario.activo' => VerificarUsuarioActivo::class]);
+        $middleware->web(append: [CabecerasSeguridad::class]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->dontFlash(['contrasena', 'contrasena_confirmation', 'url', 'token']);
